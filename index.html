@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="cs" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sledování zásilek</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        base: {
+                            light: '#f5f5f4', // stone-100
+                            dark: '#0a0a0a',  // very black
+                        },
+                        surface: {
+                            light: '#ffffff',
+                            dark: '#171717',
+                        },
+                        border: {
+                            light: '#e5e5e5',
+                            dark: '#262626',
+                        },
+                        accent: '#ff6a3d', // lighter vibrant orange
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-base-light dark:bg-base-dark text-neutral-900 dark:text-neutral-100 min-h-screen flex flex-col font-sans antialiased selection:bg-accent selection:text-white transition-colors duration-200">
+    
+    <!-- Dot pattern overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwMDAiLz48L3N2Zz4=')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')]"></div>
+
+    <div class="max-w-5xl mx-auto w-full px-6 py-12 flex flex-col flex-grow relative z-10">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-end mb-16 md:mb-24">
+            <div>
+                <h1 class="text-sm font-semibold tracking-tight uppercase">Track EU</h1>
+                <p class="text-xs text-neutral-500 font-mono mt-1">v1.1 / DEMO</p>
+            </div>
+            <button id="theme-toggle" class="text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-xs font-mono uppercase tracking-wider">
+                <span class="dark:hidden">Dark Mode</span>
+                <span class="hidden dark:inline">Light Mode</span>
+            </button>
+        </header>
+
+        <!-- Main Search Area -->
+        <main>
+            <form id="tracking-form" class="w-full mb-12 relative group">
+                <label for="tracking-number" class="block text-xs font-mono uppercase tracking-widest text-label mb-4">Zadejte kód zásilky</label>
+                <div id="input-container" class="relative flex items-end border-b-2 border-neutral-300 dark:border-neutral-700 focus-within:border-accent dark:focus-within:border-accent transition-colors pb-2">
+                    <input type="text" id="tracking-number" class="w-full bg-transparent text-[clamp(2rem,5vw,3.75rem)] leading-none font-mono tracking-tight placeholder-neutral-300 dark:placeholder-neutral-700 focus:outline-none uppercase" placeholder="Z1234567890" required autocomplete="off" spellcheck="false">
+                    <button type="submit" id="track-btn" class="ml-4 flex-shrink-0 text-sm font-semibold uppercase tracking-wider bg-black dark:bg-white text-white dark:text-black px-6 py-4 rounded-none hover:invert active:scale-[0.98] transition-transform duration-200 flex items-center gap-2">
+                        <span id="btn-text">Hledat</span>
+                        <span id="btn-loader" class="hidden"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i></span>
+                    </button>
+                </div>
+
+                <!-- Ambiguous Carrier Selection -->
+                <div id="carrier-selection" class="hidden mt-6 animate-fade-in">
+                    <p class="text-xs font-mono text-label mb-3">Více shod. Upřesněte dopravce:</p>
+                    <div id="carrier-chips" class="flex flex-wrap gap-2">
+                        <!-- Chips dynamically inserted here -->
+                    </div>
+                </div>
+            </form>
+
+            <!-- Loading Skeleton -->
+            <div id="loading-state" class="hidden mt-12 pt-8 border-t border-neutral-200 dark:border-neutral-800">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="flex flex-col gap-8">
+                        <div><div class="skeleton-box h-3 w-16 mb-2"></div><div class="skeleton-box h-6 w-32"></div></div>
+                        <div><div class="skeleton-box h-3 w-24 mb-2"></div><div class="skeleton-box h-6 w-48"></div></div>
+                        <div><div class="skeleton-box h-3 w-20 mb-2"></div><div class="skeleton-box h-6 w-28"></div></div>
+                    </div>
+                    <div class="flex flex-col gap-6">
+                        <div class="skeleton-box h-3 w-16 mb-2"></div>
+                        <div class="flex gap-4"><div class="skeleton-box h-2 w-2 mt-1.5"></div><div class="flex-grow"><div class="skeleton-box h-4 w-32 mb-2"></div><div class="skeleton-box h-3 w-24"></div></div></div>
+                        <div class="flex gap-4"><div class="skeleton-box h-2 w-2 mt-1.5"></div><div class="flex-grow"><div class="skeleton-box h-4 w-40 mb-2"></div><div class="skeleton-box h-3 w-20"></div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error / Empty State -->
+            <div id="error-state" class="hidden mt-12 p-6 border-l-2 border-red-500 bg-red-500/5 text-red-600 dark:text-red-400 font-mono text-sm">
+                <span class="font-bold uppercase tracking-wider mb-2 block">Chyba nalezení</span>
+                <span id="error-message">Zásilka tohoto podacího čísla není v evidenci.</span>
+            </div>
+
+            <!-- Result Area -->
+            <div id="result-container" class="hidden" aria-live="polite">
+                <!-- Data populated by JS -->
+            </div>
+            
+        </main>
+        
+        <div id="history-container" class="mt-16 border-t border-border-light dark:border-border-dark pt-8 hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xs font-mono uppercase tracking-widest text-label">Historie dotazů</h3>
+                <div class="flex items-center gap-2">
+                    <span id="clear-confirm" class="text-xs font-mono text-red-500 hidden font-bold">Opravdu?</span>
+                    <button id="clear-history" class="text-xs font-mono text-neutral-500 hover:text-accent transition-colors">Vymazat</button>
+                </div>
+            </div>
+            <div id="history-list" class="flex flex-col gap-2">
+                <!-- History items -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="app.js"></script>
+</body>
+</html>

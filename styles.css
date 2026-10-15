@@ -1,0 +1,193 @@
+@layer utilities {
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom scrollbar for a technical feel */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    border-radius: 0px;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #404040;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #a3a3a3;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #737373;
+}
+
+/* Timeline precise line */
+.timeline-line {
+    position: absolute;
+    left: 5px;
+    top: 14px;
+    bottom: -24px;
+    width: 2px;
+    background-color: #262626;
+}
+.light .timeline-line {
+    background-color: #e5e5e5;
+}
+
+.timeline-line.dashed {
+    background-color: transparent;
+    border-left: 2px dashed #404040;
+    opacity: 0;
+    animation: fadeIn 0.4s ease-out 0.4s forwards;
+}
+.light .timeline-line.dashed {
+    border-left: 2px dashed #d4d4d4;
+}
+
+.timeline-item:last-child .timeline-line {
+    display: none;
+}
+
+/* Animations */
+@media (prefers-reduced-motion: no-preference) {
+    .animate-shake {
+        animation: shake 0.4s ease-out forwards;
+    }
+    .animate-draw-line {
+        transform-origin: top;
+        transform: scaleY(0);
+        animation: drawLine 0.4s ease-out forwards;
+    }
+    .animate-stagger-item {
+        opacity: 0;
+        transform: translateY(8px);
+        animation: fadeInUp 0.3s ease-out forwards;
+    }
+    .delay-0 { animation-delay: 50ms; }
+    .delay-1 { animation-delay: 120ms; }
+    .delay-2 { animation-delay: 190ms; }
+    .delay-3 { animation-delay: 260ms; }
+    .delay-4 { animation-delay: 330ms; }
+    
+    .animate-badge-pop {
+        opacity: 0;
+        transform: scale(0.9);
+        animation: badgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
+@keyframes drawLine {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes badgePop {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Shimmer Skeleton */
+.skeleton-box {
+    position: relative;
+    overflow: hidden;
+    background-color: #e5e5e5;
+}
+.dark .skeleton-box {
+    background-color: #262626;
+}
+.skeleton-box::after {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.4) 20%, rgba(255,255,255,0.4) 60%, rgba(255,255,255,0) 100%);
+    animation: shimmer 1.5s infinite;
+}
+.dark .skeleton-box::after {
+    background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0) 100%);
+}
+@keyframes shimmer {
+    100% { transform: translateX(100%); }
+}
+
+/* Pulse Square - Expand Ring */
+.pulse-square {
+    position: relative;
+}
+.pulse-square::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 1px solid #ff6a3d;
+    z-index: -1;
+    animation: pulseRing 1.8s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+    .pulse-square::before {
+        animation: none;
+        display: none;
+    }
+}
+@keyframes pulseRing {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* History Hover Shift */
+.history-item {
+    transition: background-color 0.2s ease-out;
+}
+.history-item:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+.dark .history-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+.history-code-wrapper {
+    transition: transform 0.2s ease-out;
+}
+.history-item:hover .history-code-wrapper {
+    transform: translateX(20px);
+}
+.history-arrow {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+.history-item:hover .history-arrow {
+    opacity: 1;
+}
+
+/* Accent texts custom overrides */
+.text-label {
+    color: #8f8f8f;
+}
+.dark .text-label {
+    color: #9a9a9a;
+}
+.text-timeline-sub {
+    color: #8f8f8f;
+}
+.dark .text-timeline-sub {
+    color: #9a9a9a;
+}
